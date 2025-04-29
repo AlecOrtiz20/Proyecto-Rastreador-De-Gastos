@@ -8,7 +8,6 @@ import com.example.ProyectoRastreador.de.Gastos.Enums.EstadoUser;
 import com.example.ProyectoRastreador.de.Gastos.Enums.RoleUser;
 import com.example.ProyectoRastreador.de.Gastos.Repository.CredentialsRepository;
 import com.example.ProyectoRastreador.de.Gastos.Repository.UserRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -51,20 +50,20 @@ public class AuthService {
                 .build();
         this.credentialsRepository.save(credencialesUser);
 
-        return this.jwtService.generateToken(userRequest.getCredencialesDTO().getEmail());
+        return this.jwtService.generateToken(userRequest.getCredencialesDTO().getUsername());
 
 
     }
 
     public String loginUser(LoginDTO loginDTO){
-        CredencialesUser credencialesUser = this.credentialsRepository.findByEmail(loginDTO.getEmail())
+        CredencialesUser credencialesUser = this.credentialsRepository.findByUsername(loginDTO.getEmail())
                 .orElseThrow();
 
         if (!passwordEncoder.matches(loginDTO.getClave(), credencialesUser.getPassword())){
             throw new RuntimeException("Las credenciales no son correctas");
         }
 
-        return this.jwtService.generateToken(credencialesUser.getEmail());
+        return this.jwtService.generateToken(credencialesUser.getUsername());
 
     }
 

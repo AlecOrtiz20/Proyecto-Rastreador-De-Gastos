@@ -1,10 +1,8 @@
 package com.example.ProyectoRastreador.de.Gastos.Security;
 
-import com.example.ProyectoRastreador.de.Gastos.Entity.CredencialesUser;
-import com.example.ProyectoRastreador.de.Gastos.Enums.RoleUser;
 import com.example.ProyectoRastreador.de.Gastos.Repository.CredentialsRepository;
 import com.example.ProyectoRastreador.de.Gastos.Security.JWT.JwtFilter;
-import lombok.RequiredArgsConstructor;
+import com.example.ProyectoRastreador.de.Gastos.Security.JWT.JwtService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,15 +18,19 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
-
 public class SecurityConfig {
 
-    private final JwtFilter jwtFilter;
     private final CredentialsRepository credentialsRepository;
+    private final JwtService jwtService;
 
-    public SecurityConfig(JwtFilter jwtFilter, CredentialsRepository credentialsRepository) {
-        this.jwtFilter = jwtFilter;
+    public SecurityConfig(CredentialsRepository credentialsRepository, JwtService jwtService) {
         this.credentialsRepository = credentialsRepository;
+        this.jwtService = jwtService;
+    }
+
+    @Bean
+    public JwtFilter jwtFilter(){
+        return new JwtFilter(jwtService, userDetailsService());
     }
 
     @Bean
@@ -38,16 +40,17 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/gasto/**").hasRole("USER")
                         .anyRequest().authenticated())
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 
     @Bean
     public UserDetailsService userDetailsService(){
-        return email -> credentialsRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado: " + email));
+        return username -> credentialsRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado: " + username));
     }
 
 

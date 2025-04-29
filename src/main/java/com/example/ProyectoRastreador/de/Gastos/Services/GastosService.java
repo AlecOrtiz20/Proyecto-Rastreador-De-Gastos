@@ -25,7 +25,7 @@ public class GastosService implements CrudService<Gastos, GastosDTO> {
 
     @Override
     public GastosDTO save(GastosDTO gastosDTO, Long id) {
-        Gastos gastos = new Gastos(gastosDTO.getMonto(), new Date(), gastosDTO.getCategoriaGasto(), gastosDTO.getDescripcion() , String.valueOf(id));
+        Gastos gastos = new Gastos(gastosDTO.getMonto(), new Date(), gastosDTO.getCategoriaGasto(), EstadoGasto.ACTIVO , gastosDTO.getDescripcion() , String.valueOf(id));
         this.gastosRepository.save(gastos);
 
         return gastosDTO;

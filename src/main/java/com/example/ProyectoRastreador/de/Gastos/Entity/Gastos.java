@@ -22,22 +22,24 @@ import java.util.Date;
 public class Gastos {
 
     @Id
-    private Long id;
+    private String id;
     private float monto;
 
     @Indexed(name = "idx_fecha_registro")
     private Date fechaCreacion;
     private CategoriaGasto categoriaGasto;
+
     private EstadoGasto estadoGasto;
     private String descripcion;
 
     @Indexed(name = "idx_user_id")
     private String userId;
 
-    public Gastos(float monto, Date fechaCreacion, CategoriaGasto categoriaGasto, String descripcion, String userId) {
+    public Gastos(float monto, Date fechaCreacion, CategoriaGasto categoriaGasto, EstadoGasto estadoGasto, String descripcion, String userId) {
         this.monto = monto;
         this.fechaCreacion = fechaCreacion;
         this.categoriaGasto = categoriaGasto;
+        this.estadoGasto = estadoGasto;
         this.descripcion = descripcion;
         this.userId = userId;
     }

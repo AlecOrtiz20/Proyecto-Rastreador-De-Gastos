@@ -2,12 +2,14 @@ package com.example.ProyectoRastreador.de.Gastos.Controllers;
 
 import com.example.ProyectoRastreador.de.Gastos.DTO.GastosDTO;
 import com.example.ProyectoRastreador.de.Gastos.Entity.CredencialesUser;
+import com.example.ProyectoRastreador.de.Gastos.Enums.CategoriaGasto;
 import com.example.ProyectoRastreador.de.Gastos.Repository.CredentialsRepository;
 import com.example.ProyectoRastreador.de.Gastos.Security.SecurityUtils;
 import com.example.ProyectoRastreador.de.Gastos.Services.CurrentUserService;
 import com.example.ProyectoRastreador.de.Gastos.Services.GastosFilterService;
 import com.example.ProyectoRastreador.de.Gastos.Services.GastosService;
 import org.apache.catalina.security.SecurityUtil;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -18,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/gasto")
+@RequestMapping("/api/gasto/")
 public class GastosController {
 
     private final GastosService gastosService;
@@ -59,6 +61,25 @@ public class GastosController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al traer los gastos");
         }
+    }
+
+    @GetMapping("/categoria")
+    public ResponseEntity<?> filterForCategory(@RequestParam CategoriaGasto categoriaGasto, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10" ) int size){
+        try{
+            CredencialesUser user = this.currentUserService.getCurrentUser();
+
+            String idUser = String.valueOf(user.getUserCredenciales().getId());
+
+            Page<GastosDTO> gastos = this.gastosFilterService.gastosForCategory(idUser, categoriaGasto, page, size);
+
+            return ResponseEntity.ok(gastos);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("Error: " , e.getMessage()));
+        }
+
+
+
+
     }
 
 

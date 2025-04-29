@@ -2,6 +2,7 @@ package com.example.ProyectoRastreador.de.Gastos.Services;
 
 import com.example.ProyectoRastreador.de.Gastos.DTO.GastosDTO;
 import com.example.ProyectoRastreador.de.Gastos.Entity.Gastos;
+import com.example.ProyectoRastreador.de.Gastos.Enums.CategoriaGasto;
 import com.example.ProyectoRastreador.de.Gastos.Enums.EstadoGasto;
 import com.example.ProyectoRastreador.de.Gastos.MapStruct.GastosMapper;
 import org.springframework.data.domain.Page;
@@ -100,5 +101,30 @@ public class GastosFilterService {
         return new PageImpl<>(gastosDTOS, pageable, total);
     }
 
+
+    public Page<GastosDTO> gastosForCategory(String idUser, CategoriaGasto categoriaGasto, int page, int size){
+
+        try{
+
+            Query query = new Query();
+            query.addCriteria(Criteria.where("userId").is(idUser).and("categoriaGasto").is(categoriaGasto));
+
+            query.with(PageRequest.of(page, size));
+
+            List<Gastos> gastosList = this.mongoTemplate.find(query, Gastos.class);
+
+            List<GastosDTO> gastosDTOS = gastosList.stream()
+                    .map(this.gastosMapper::toDTO)
+                    .toList();
+
+
+            return new PageImpl<>(gastosDTOS, PageRequest.of(page, size), gastosDTOS.size());
+
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
+
+
+    }
 
 }

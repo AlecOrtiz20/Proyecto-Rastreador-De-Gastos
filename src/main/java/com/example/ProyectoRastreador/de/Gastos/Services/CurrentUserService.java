@@ -16,10 +16,13 @@ public class CurrentUserService {
         this.securityUtils = securityUtils;
     }
 
-    public CredencialesUser getCurrentUser(){
-        String email = securityUtils.getCurrentUsername();
 
-        return this.credentialsRepository.findByEmail(email)
+    public CredencialesUser getCurrentUser(){
+        String username = securityUtils.getCurrentUsername();
+
+        System.out.println("Buscando usuario con username: " + username);
+
+        return this.credentialsRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("El usuario no existe"));
     }
 }
