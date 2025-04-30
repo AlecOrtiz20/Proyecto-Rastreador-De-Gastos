@@ -12,6 +12,7 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
+import java.util.UUID;
 
 @Document(collection = "gastos")
 @CompoundIndex(name = "")
@@ -35,7 +36,9 @@ public class Gastos {
     @Indexed(name = "idx_user_id")
     private String userId;
 
+
     public Gastos(float monto, Date fechaCreacion, CategoriaGasto categoriaGasto, EstadoGasto estadoGasto, String descripcion, String userId) {
+        this.id = UUID.randomUUID().toString();
         this.monto = monto;
         this.fechaCreacion = fechaCreacion;
         this.categoriaGasto = categoriaGasto;

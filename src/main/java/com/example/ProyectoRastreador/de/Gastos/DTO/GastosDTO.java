@@ -21,6 +21,9 @@ public class GastosDTO {
     @NotBlank(message = "La descripcion es obligatoria")
     private String descripcion;
 
-
-
+    public GastosDTO(float monto, CategoriaGasto categoriaGasto, String descripcion) {
+        this.monto = monto;
+        this.categoriaGasto = categoriaGasto;
+        this.descripcion = descripcion;
+    }
 }

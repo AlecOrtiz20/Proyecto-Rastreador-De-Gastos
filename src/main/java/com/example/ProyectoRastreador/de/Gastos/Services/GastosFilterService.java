@@ -93,7 +93,7 @@ public class GastosFilterService {
         List<Gastos> gastosList = this.mongoTemplate.find(query, Gastos.class);
 
         List<GastosDTO> gastosDTOS = gastosList.stream()
-                .map(this.gastosMapper::toDTO)
+                .map(gastos -> new GastosDTO(gastos.getMonto(), gastos.getCategoriaGasto(), gastos.getDescripcion()))
                 .toList();
 
         long total = this.mongoTemplate.count(query.skip(-1).limit(-1), Gastos.class);
